@@ -1,18 +1,16 @@
 // Selecionando elemento ul do HTML
 const lista = document.querySelector('ul');
-const listaDoCarrinho = lista.querySelector('.containerCarrinho ul');
-const output = document.getElementById('precoTotal');
-output.value = '';
+const listaDoCarrinho = document.querySelector('.containerCarrinho ul ');
+let output = document.querySelector('#precoTotal');
+console.log(output);
 
-const ul = document.querySelector('.containerListaProdutos ul');
-
-const montarListaProdutos = (listaProdutos) => {
-    ul.innerHTML = '';
+function montarListaProdutos(listaProdutos) {
+    lista.innerHTML = '';
 
     listaProdutos.forEach((produto) => {
         const { nome, preco, secao, img, componentes, id } = produto
         const li = document.createElement('li');
-        const img = document.createElement('img');
+        const image = document.createElement('img');
         const h3 = document.createElement('h3');
         const p = document.createElement('p');
         const span = document.createElement('span');
@@ -28,15 +26,14 @@ const montarListaProdutos = (listaProdutos) => {
         button.setAttribute('data-id', id)
 
         // Adicionando dados do produto aos elementos
-        img.src = produto.img;
-        img.alt = produto.nome;
-        h3.innerText = produto.nome;
-        p.innerText = produto.preco;
-        span.innerText = produto.secao;
+        image.src = img;
+        h3.innerText = nome;
+        p.innerText = preco;
+        span.innerText = secao;
         button.innerText = 'Adicionar ao carrinho'
 
         // Adicionando o elementos para o li
-        li.appendChild(img);
+        li.appendChild(image);
         li.appendChild(h3);
         li.appendChild(p);
         li.appendChild(span);
@@ -44,7 +41,7 @@ const montarListaProdutos = (listaProdutos) => {
         li.appendChild(button)
 
         // Adicionando li ao HTML
-        ul.appendChild(li);
+        lista.appendChild(li);
     });
 
     const button = document.querySelectorAll('.containerListaProdutos ul li button');
@@ -62,6 +59,7 @@ function addButton(buttons) {
         })
     });
 }
+
 let somaTotal = []
 
 function addCar(ident) {
@@ -72,34 +70,42 @@ function addCar(ident) {
             addProduto = { ...produto }
         }
     });
+
+    const { imgProd, nome, preco, secao } = addProduto;
+    const itemadd = document.createElement('li');
+    const image = document.createElement('img');
+    const name = document.createElement('p');
+    const price = document.createElement('p');
+    const section = document.createElement('p');
+
+    price.setAttribute('class', 'price')
+
+    image.src = imgProd;
+    name.innerText = nome;
+    price.innerText = preco;
+    section.innerText = secao;
+
+    itemadd.appendChild(image);
+    itemadd.appendChild(name);
+    itemadd.appendChild(price);
+    itemadd.appendChild(section);
+
+    listaDoCarrinho.appendChild(itemadd);
+
+
+    const value = Number(preco);
+    somaTotal.push(value)
+    const result = somaTotal.reduce((a, b) => a + b)
+
+    output.innerHTML = result + '.00'
+
 }
-const { img, nome, preco, secao } = addProduto;
-const itemadd = document.createElement('li');
-const image = document.createElement('img');
-const name = document.createElement('p');
-const price = document.createElement('p');
-const section = document.createElement('p');
 
-price.setAttribute('class', 'price')
-
-image.src = img;
-nome.innerText = nome;
-price.innerText = preco;
-section.innerText = secao;
-
-itemadd.appendChild(image);
-itemadd.appendChild(nome);
-itemadd.appendChild(price);
-itemadd.appendChild(section);
-
-listaDoCarrinho.appendChild(itemadd);
-
-
-const value = Number(preco);
-somaTotal.push(value)
-const result = somaTotal.reduce((a, b) => a + b)
-
-output.innerHTML = result + '.00'
+// Selecionando botao em nosso HTML
+const botaoMostrarTodos = document.querySelector('.estiloGeralBotoes--mostrarTodos');
+const botaoMostrarHortifruti = document.querySelector('.estiloGeralBotoes--filtrarHortifruti');
+const input = document.querySelector(".campoBuscaPorNome")
+const botaoBuscaPorNome = document.querySelector('.estiloGeralBotoes--botaoBuscaPorNome')
 
 
 const mostrarTodos = () => {
@@ -107,49 +113,39 @@ const mostrarTodos = () => {
     return montarListaProdutos(produtos);
 }
 
-// Selecionando botao em nosso HTML
-const botaoMostrarTodos = document.querySelector('.estiloGeralBotoes--mostrarTodos');
-
 // Adicionando event listener de clique, e executando a função de filtro
 botaoMostrarTodos.addEventListener('click', mostrarTodos);
 
 const filtrarPorHortifruti = () => {
 
     const listaHortifruti = produtos.filter((produto) => {
-            const { secao } = produto;
+        const { secao } = produto;
         if (secao === 'Hortifruti') {
             return produto
         }
     });
 
-    montarListaProdutos(listaHortifruti);
+    return montarListaProdutos(listaHortifruti);
 
 }
-
-// Selecionando botao em nosso HTML
-const botaoMostrarHortifruti = document.querySelector('.estiloGeralBotoes--filtrarHortifruti');
-
 // Adicionando event listener de clique, e executando a função de filtro
 botaoMostrarHortifruti.addEventListener('click', filtrarPorHortifruti);
 
-const input = document.querySelector(".campoBuscaPorNome")
+
 
 const campoBuscaPorNome = () => {
     const valorInput = input.value.toLowerCase();
     const buscaPorNome = produtos.filter((produto) => {
         const { nome, secao } = produto;
-        if(nome.toLowerCase() === valorInput || secao.toLowerCase() === valorInput) {
+        if (nome.toLowerCase() === valorInput || secao.toLowerCase() === valorInput) {
             return produto
         }
 
     });
 
-    montarListaProdutos(buscaPorNome);
-    
-}
+    return montarListaProdutos(buscaPorNome);
 
-// Selecionando botao em nosso HTML
-const botaoBuscaPorNome = document.querySelector('.estiloGeralBotoes--botaoBuscaPorNome')
+}
 
 // Adicionando event listener de clique, e executando a função de filtro
 botaoBuscaPorNome.addEventListener('click', campoBuscaPorNome)
